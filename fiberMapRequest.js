@@ -54,3 +54,29 @@ module.exports.getStreets = async (cityId) => {
   console.log(streets);
   return streets;
 };
+
+module.exports.getStreetNumbers = async (streetId) => {
+    const streetNumbers = [];
+    response = await axios.get(`https://fibermap.it/api/street/${streetId}/street-numbers`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    response.data.data.forEach((streetNumber) => streetNumbers.push(streetNumber));
+
+    console.log(streetNumbers);
+    return streetNumbers;
+};
+
+module.exports.getInfo = async (houseId) => {
+    response = await axios.get(`https://fibermap.it/api/street-number/${houseId}/services`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const info = response.data.data;
+
+    console.log(info);
+    return info;
+};

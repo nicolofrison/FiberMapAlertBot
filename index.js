@@ -26,42 +26,65 @@ bot.command('help', (message) => {
 
 bot.command('place', async (message) => {
   const regions = await fiberMap.getRegions();
-  const regionsButtons = regions.map((r) => [Markup.callbackButton(r.name, 'region'+r.id)]);
-  message.reply('Set your region', Markup.inlineKeyboard([
-    regionsButtons
-  ]).oneTime().resize().extra());
+  const regionsButtons = regions.map((r) => Markup.callbackButton(r.name, 'region'+r.id));
+  message.reply('Select your region:', Extra.HTML()
+      .markup(Markup.inlineKeyboard(regions.map((r) => [Markup.callbackButton(r.name, 'region'+r.id+r.name)]))));
     //Markup.keyboard(regionsButtons).oneTime().resize()/*.extra()*/0);
 });
 
-bot.action(/^region(.+)$/, async (message) => {
-  console.log(message);
-  console.log(message.match[0]);
-  /*
-  const provinces = await fiberMap.getProvinces();
-  message.reply('Set your region', 
-    Markup.keyboard(
-      regions.map((r) => Markup.callbackButton(r.name, 'region'+r.id)
-    )).oneTime().resize().extra());*/
+bot.action(/region(\d+)(.+)$/, async (ctx) => {
+  await ctx.editMessageText('Region selected: ' + ctx.match[2]);
+  const region = ctx.match[1];
+  const provinces = await fiberMap.getProvinces(region);
+  await ctx.reply('Select your province:', Extra.HTML().markup(
+      Markup.inlineKeyboard(
+          provinces.map((p) => [Markup.callbackButton(p.name, 'province'+p.id+p.name)])
+      )));
 });
 
-bot.on('callback_query', (callbackQuery) => {
-  console.log(callbackQuery);
+bot.action(/province(.{2})(.+)$/, async (ctx) => {
+  await ctx.editMessageText('Province selected: ' + ctx.match[2]);
+  const province = ctx.match[1];
+  const cities = await fiberMap.getCities(province);
+  await ctx.reply('Select your city:', Extra.HTML().markup(
+      Markup.inlineKeyboard(
+          cities.map((c) => [Markup.callbackButton(c.name, 'city'+c.id+c.name)])
+      )));
 });
 
-bot.hears('hello', (ctx) => {
-  ctx.reply('<b>Hello</b>. <i>How are you today?</i>',
-    Extra.HTML()
-    .markup(Markup.inlineKeyboard([
-      Markup.callbackButton('Not bad', 'not bad'),
-      Markup.callbackButton('All right', 'all right')
-    ])))
-})
-bot.action('not bad', (ctx) => {
-  ctx.editMessageText('<i>Have a nice day 😊</i>',
-    Extra.HTML())
-})
-bot.action('all right', (ctx) => {
-  ctx.editMessageText('<i>May happiness be with you 🙏</i>',
-    Extra.HTML())
-})
+bot.action(/city(\d+)(.+)$/, async (ctx) => {
+  await ctx.editMessageText('City selected: ' + ctx.match[2]);
+  const city = ctx.match[1];
+  const streets = await fiberMap.getStreets(city);
+  await ctx.reply('Select your street:', Extra.HTML().markup(
+      Markup.inlineKeyboard(
+          streets.map((s) => [Markup.callbackButton(s.name, 'street'+s.id)])
+      )));
+});
+
+bot.action(/street(.+)$/, async (ctx) => {
+  //const streetName = await fiberMap.
+  const streetName = ctx.update.callback_query.message.reply_markup.inline_keyboard.map((s) =>
+      s[0]).find((s) => s.callback_data === ctx.match[0]).text;
+  await ctx.editMessageText('Street selected: ' + streetName);
+  const street = ctx.match[1];
+  const streetNumbers = await fiberMap.getStreetNumbers(street);
+  await ctx.reply('Select your street number:', Extra.HTML().markup(
+      Markup.inlineKeyboard(
+          streetNumbers.map((sn) => [Markup.callbackButton(sn.name, 'houseId'+sn.id)])
+      )));
+});
+
+bot.action(/houseId(.+)$/, async (ctx) => {
+  //const streetName = await fiberMap.
+  const streetNumber = ctx.update.callback_query.message.reply_markup.inline_keyboard.map((s) =>
+      s[0]).find((s) => s.callback_data === ctx.match[0]).text;
+  await ctx.editMessageText('Street number selected: ' + streetNumber);
+  const houseId = ctx.match[1];
+  const info = await  fiberMap.getInfo(houseId);
+  await ctx.reply('Info: \n' + JSON.stringify(info.service, null, 1), Extra.HTML().markup(JSON.stringify(info.service)));
+});
+
 bot.launch()
+
+// bot.command('stop', (ctx) => bot.stop());
