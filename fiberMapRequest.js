@@ -12,7 +12,7 @@ module.exports.getRegions = async () => {
           (zone) => 
               zone.data.forEach((region) => regions.push(region))));
   
-  console.log(regions);
+  //console.log(regions);
   return regions;
 };
 
@@ -25,7 +25,7 @@ module.exports.getProvinces = async (regionId) => {
   });
   response.data.data.forEach((province) => provinces.push(province));
   
-  console.log(provinces);
+  //console.log(provinces);
   return provinces;
 };
 
@@ -38,7 +38,7 @@ module.exports.getCities = async (provinceId) => {
   });
   response.data.data.forEach((city) => cities.push(city));
   
-  console.log(cities);
+  //console.log(cities);
   return cities;
 };
 
@@ -51,7 +51,7 @@ module.exports.getStreets = async (cityId) => {
   });
   response.data.data.forEach((street) => streets.push(street));
   
-  console.log(streets);
+  //console.log(streets);
   return streets;
 };
 
@@ -64,7 +64,7 @@ module.exports.getStreetNumbers = async (streetId) => {
     });
     response.data.data.forEach((streetNumber) => streetNumbers.push(streetNumber));
 
-    console.log(streetNumbers);
+    //console.log(streetNumbers);
     return streetNumbers;
 };
 
@@ -77,6 +77,6 @@ module.exports.getInfo = async (houseId) => {
 
     const info = response.data.data;
 
-    console.log(info);
+    //console.log(info);
     return info;
 };
