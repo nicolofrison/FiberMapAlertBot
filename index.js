@@ -3,9 +3,29 @@ require('dotenv').config()
 const Telegraf = require('telegraf')
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
+const fs = require('fs');
+
 const fiberMap = require('./fiberMapRequest');
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
+
+setInterval(() => {
+  const users = JSON.parse(fs.readFileSync('files/users'));
+
+  users.forEach(async (u) => {
+    const lastData = JSON.parse(await fs.readFileSync('files/addresses/' + u.address));
+    const newData = await fiberMap.getInfo(u.address);
+
+    u.service.forEach((s) => {
+      s.types.forEach((t) => {
+        if (t.state !== newData.service[s.name].types[t.name].state) {
+          // send alert
+        }
+      });
+    });
+    if (lastData.service)
+  });
+}, 43200000);
 
 bot.use(async (ctx, next) => {
   const start = new Date()

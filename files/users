@@ -1,0 +1,14 @@
+[
+  {
+    "telegramId": "", 
+    "address": "",
+    "service": [
+      {
+        "name": "Fibra Ottica",
+        "types": [
+          "Vsdl"
+        ],
+      },
+    ],
+  }
+]
