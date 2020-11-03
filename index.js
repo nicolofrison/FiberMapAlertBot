@@ -8,32 +8,39 @@ const session = require('telegraf/session');
 
 const fiberMap = require('./fiberMapRequest');
 const user = require('./user');
+const utils = require('./utils');
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
-setInterval(() => {
-  const users = JSON.parse(fs.readFileSync('files/users'));
 
 bot.use(session());
-    const lastData = JSON.parse(await fs.readFileSync('files/addresses/' + u.address));
-    const newData = await fiberMap.getInfo(u.address);
 
-    u.service.forEach((s) => {
-      s.types.forEach((t) => {
-        if (t.state !== newData.service[s.name].types[t.name].state) {
-          // send alert
-        }
-      });
-    });
-    if (lastData.service)
-  });
-}, 43200000);
+
+
 
 bot.use(async (ctx, next) => {
   const start = new Date()
   await next()
   const response_time = new Date() - start
   console.log(`(Response Time: ${response_time})`)
+})
+
+bot.settings(async (ctx) => {
+  await ctx.setMyCommands([
+    {
+      command: '/place',
+      description: 'Select your address'
+    },
+    {
+      command: '/saveAddress',
+      description: 'After the selection of the address with /place it saves your address'
+    },
+    {
+      command: '/baz',
+      description: 'baz description'
+    }
+  ])
+  return ctx.reply('Ok')
 })
 
 bot.command('help', (message) => {
