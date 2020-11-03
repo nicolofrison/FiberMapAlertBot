@@ -4,15 +4,17 @@ const Telegraf = require('telegraf')
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
 const fs = require('fs');
+const session = require('telegraf/session');
 
 const fiberMap = require('./fiberMapRequest');
+const user = require('./user');
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
 setInterval(() => {
   const users = JSON.parse(fs.readFileSync('files/users'));
 
-  users.forEach(async (u) => {
+bot.use(session());
     const lastData = JSON.parse(await fs.readFileSync('files/addresses/' + u.address));
     const newData = await fiberMap.getInfo(u.address);
 
@@ -49,7 +51,7 @@ bot.command('place', async (message) => {
   const regionsButtons = regions.map((r) => Markup.callbackButton(r.name, 'region'+r.id));
   message.reply('Select your region:', Extra.HTML()
       .markup(Markup.inlineKeyboard(regions.map((r) => [Markup.callbackButton(r.name, 'region'+r.id+r.name)]))));
-    //Markup.keyboard(regionsButtons).oneTime().resize()/*.extra()*/0);
+    //Markup.keyboard(regionsButtons).oneTime().resize().extra());
 });
 
 bot.action(/region(\d+)(.+)$/, async (ctx) => {
@@ -102,7 +104,23 @@ bot.action(/houseId(.+)$/, async (ctx) => {
   await ctx.editMessageText('Street number selected: ' + streetNumber);
   const houseId = ctx.match[1];
   const info = await  fiberMap.getInfo(houseId);
-  await ctx.reply('Info: \n' + JSON.stringify(info.service, null, 1), Extra.HTML().markup(JSON.stringify(info.service)));
+
+  ctx.session.address = houseId;
+
+  await ctx.reply('Info: \n'/* + JSON.stringify(info.service, null, 1)*/, Extra.HTML().markup(JSON.stringify(info.service)));
+});
+
+bot.command('saveAddress', async (ctx) => {
+  const chatId = ctx.message.chat.id;
+  const address = ctx.session.address;
+
+  if (address) {
+    user.save(chatId, address);
+    fs.writeFileSync('files/addresses/' + address, JSON.stringify((await fiberMap.getInfo(address)), null, 2));
+    ctx.reply('Address saved');
+  } else {
+    ctx.reply('No address selected!\nUse /place to set the address');
+  }
 });
 
 bot.launch()
