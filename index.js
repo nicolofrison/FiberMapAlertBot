@@ -15,42 +15,21 @@ const bot = new Telegraf(process.env.BOT_TOKEN)
 
 bot.use(session());
 
-
-
-
 bot.use(async (ctx, next) => {
   const start = new Date()
   await next()
   const response_time = new Date() - start
   console.log(`(Response Time: ${response_time})`)
-})
+});
 
-bot.settings(async (ctx) => {
-  await ctx.setMyCommands([
-    {
-      command: '/place',
-      description: 'Select your address'
-    },
-    {
-      command: '/saveAddress',
-      description: 'After the selection of the address with /place it saves your address'
-    },
-    {
-      command: '/baz',
-      description: 'baz description'
-    }
-  ])
-  return ctx.reply('Ok')
-})
-
-bot.command('help', (message) => {
-  /*fiberMap.getRegions();
-  fiberMap.getProvinces(5);
-  fiberMap.getCities('VE');
-  fiberMap.getStreets('027035');*/
-  message.reply("prova",
-      Markup.keyboard([Markup.callbackButton(`ciao`, 'id1')]).oneTime().resize().extra()
-    );
+bot.command('help', async (ctx) => {
+  let helpMessage = 'Telegram bot that alert if something in fibermap site changes based on the preferences\n\n' +
+    'Commands:\n\n';
+  (await  ctx.getMyCommands()).forEach((c) => {
+    helpMessage += '/' + c.command + ' - ' + c.description + '\n';
+  });
+  console.log(await ctx.getMyCommands());
+  ctx.reply(helpMessage);
 });
 
 bot.command('place', async (message) => {
@@ -58,7 +37,6 @@ bot.command('place', async (message) => {
   const regionsButtons = regions.map((r) => Markup.callbackButton(r.name, 'region'+r.id));
   message.reply('Select your region:', Extra.HTML()
       .markup(Markup.inlineKeyboard(regions.map((r) => [Markup.callbackButton(r.name, 'region'+r.id+r.name)]))));
-    //Markup.keyboard(regionsButtons).oneTime().resize().extra());
 });
 
 bot.action(/region(\d+)(.+)$/, async (ctx) => {
@@ -108,17 +86,19 @@ bot.action(/houseId(.+)$/, async (ctx) => {
   //const streetName = await fiberMap.
   const streetNumber = ctx.update.callback_query.message.reply_markup.inline_keyboard.map((s) =>
       s[0]).find((s) => s.callback_data === ctx.match[0]).text;
-  await ctx.editMessageText('Street number selected: ' + streetNumber);
-  const houseId = ctx.match[1];
-  const info = await  fiberMap.getInfo(houseId);
+  //await ctx.editMessageText('Street number selected: ' + streetNumber);
 
-  ctx.session.address = houseId;
+  ctx.session.address = ctx.match[1];
 
-  await ctx.reply('Info: \n'/* + JSON.stringify(info.service, null, 1)*/, Extra.HTML().markup(JSON.stringify(info.service)));
+  ctx.reply('What do you want to do with the address inserted?', Extra.HTML().markup(
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Save address', 'saveAddress'),
+        Markup.callbackButton('Show info', 'showInfo')
+      ])));
 });
 
-bot.command('saveAddress', async (ctx) => {
-  const chatId = ctx.message.chat.id;
+bot.action('saveAddress', async (ctx) => {
+  const chatId = (await ctx.getChat()).id;
   const address = ctx.session.address;
 
   if (address) {
@@ -128,6 +108,14 @@ bot.command('saveAddress', async (ctx) => {
   } else {
     ctx.reply('No address selected!\nUse /place to set the address');
   }
+});
+
+
+bot.action('showInfo', async (ctx) => {
+  //const info = fiberMap.getInfo(ctx.session.address);
+
+  //await ctx.reply(message, {parse_mode: 'Markdown'});
+  //await ctx.reply(message, { parse_mode: "MarkdownV2" });
 });
 
 bot.launch()
