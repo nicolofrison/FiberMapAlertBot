@@ -1,9 +1,15 @@
+require('dotenv').config()
+
 const Markup = require('telegraf/markup');
 const Extra = require('telegraf/extra');
+const fs = require('fs');
 
+const utils = require('../utils');
 const user = require('../user');
 const fiberMap = require('../fiberMapRequest');
 const botPlace = require('./place');
+
+const lang = JSON.parse(fs.readFileSync('./lang/'+process.env.LANGUAGE_FILE));
 
 const showInfo = async (ctx) => {
     let address;
@@ -18,10 +24,15 @@ const showInfo = async (ctx) => {
     }
 
     const info = await fiberMap.getInfo(address);
-    ctx.session.info = info;
 
-    await ctx.reply('Choose the service: ', Extra.HTML().markup(
-        Markup.inlineKeyboard(info.service.map((s) => [Markup.callbackButton(s.name, 'service'+s.name)]))));
+    if (info) {
+        ctx.session.info = info;
+
+        await ctx.reply(lang.messages.chooseService.capitalize(), Extra.HTML().markup(
+            Markup.inlineKeyboard(info.service.map((s) => [Markup.callbackButton(s.name, 'service'+s.name)]))));
+    } else {
+        await ctx.reply(lang.messages.infoError.capitalize());
+    }
 };
 module.exports.showInfo = showInfo;
 
@@ -29,11 +40,11 @@ const botInfo = (bot) => {
 
     bot.command('info', async (ctx) => {
         const buttons = [
-            [Markup.callbackButton('Address saved', 'selectInfoOwnAddress')],
-            [Markup.callbackButton('Another address', 'selectInfoAnotherAddress')]
+            [Markup.callbackButton(lang.messages.addressSaved.capitalize(), 'selectInfoOwnAddress')],
+            [Markup.callbackButton(lang.messages.anotherAddress.capitalize(), 'selectInfoAnotherAddress')]
         ];
 
-        await ctx.reply('Show info about: ', Extra.HTML().markup(
+        await ctx.reply(lang.messages.showInfoAbout.capitalize(), Extra.HTML().markup(
             Markup.inlineKeyboard(buttons)));
     });
 
@@ -42,16 +53,18 @@ const botInfo = (bot) => {
 
         switch (actionType) {
             case 'OwnAddress':
-                await ctx.editMessageText('Show info about: \n\tAddress saved');
+                await ctx.editMessageText(lang.messages.showInfoAbout.capitalize() + ': \n\t' +
+                    lang.messages.addressSaved.capitalize());
                 await showInfo(ctx);
                 break;
             case 'AnotherAddress':
-                await ctx.editMessageText('Show info about: \n\tAnother address');
+                await ctx.editMessageText(lang.messages.showInfoAbout.capitalize() + ': \n\t' +
+                    lang.messages.anotherAddress.capitalize());
                 ctx.session.action = "showInfo";
                 botPlace.startPlaceSetup(ctx);
                 break;
             default:
-                await ctx.reply('There was an error for the request /info!');
+                await ctx.reply(lang.messages.infoError.capitalize());
         }
     });
 

@@ -1,0 +1,28 @@
+{
+  "commands": {
+    "help": "help",
+    "setAddress": "impostaIndirizzo",
+    "info": "info"
+  },
+  "messages": {
+    "helpMessage": "telegram bot that alert if something in fibermap site changes based on the preferences",
+    "commands": "comandi",
+    "addressSaved": "indirizzo salvato",
+    "addressNotSaved": "Nessun indirizzo salvato!\nUsa /impostaIndirizzo per impostare l'indirizzo",
+    "selectRegion": "seleziona regione",
+    "regionSelected": "regione selezionata",
+    "selectProvince": "seleziona provincia",
+    "provinceSelected": "provincia selezionata",
+    "selectCity": "seleziona città",
+    "citySelected": "città selezionata",
+    "selectStreet": "seleziona via",
+    "streetSelected": "via selezionata",
+    "selectStreetNumber": "seleziona numero civico",
+    "streetNumberSelected": "numero civico selezionato",
+    "setAddressError": "C'è stato un errore durante l'impostazione del indirizzo!",
+    "chooseService": "seleziona il servizio",
+    "anotherAddress": "Altro indirizzo",
+    "showInfoAbout": "Mostra info di",
+    "infoError": "c'è stato un errore per la richiesta /info!"
+  }
+}

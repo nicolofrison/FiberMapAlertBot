@@ -6,15 +6,16 @@ const Extra = require('telegraf/extra')
 const fs = require('fs');
 const session = require('telegraf/session');
 
+const utils = require('./utils');
 const fiberMap = require('./fiberMapRequest');
 const user = require('./user');
-const utils = require('./utils');
 
 // commands
 const cmdPlace = require('./commands/place');
 const cmdInfo = require('./commands/info');
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
+const lang = JSON.parse(fs.readFileSync('./lang/'+process.env.LANGUAGE_FILE));
 
 bot.use(session());
 bot.use(async (ctx, next) => {
@@ -27,9 +28,9 @@ bot.use(async (ctx, next) => {
 cmdPlace.botPlace(bot);
 cmdInfo.botInfo(bot);
 
-bot.command('help', async (ctx) => {
-  let helpMessage = 'Telegram bot that alert if something in fibermap site changes based on the preferences\n\n' +
-    'Commands:\n\n';
+bot.command(lang.commands.help, async (ctx) => {
+  let helpMessage = lang.messages.helpMessage.capitalize() + '\n\n' +
+    lang.messages.commands.capitalize() + ':\n\n';
   (await  ctx.getMyCommands()).forEach((c) => {
     helpMessage += '/' + c.command + ' - ' + c.description + '\n';
   });
@@ -37,7 +38,7 @@ bot.command('help', async (ctx) => {
   ctx.reply(helpMessage);
 });
 
-bot.command('setAddress', async (ctx) => {
+bot.command(lang.commands.setAddress, async (ctx) => {
   await cmdPlace.startPlaceSetup(ctx);
 });
 
@@ -49,9 +50,9 @@ bot.action('saveAddress', async (ctx) => {
   if (address) {
     await user.save(chatId, address);
     fs.writeFileSync('files/addresses/' + address, JSON.stringify((await fiberMap.getInfo(address)), null, 2));
-    await ctx.reply('Address saved');
+    await ctx.reply(lang.messages.addressSaved);
   } else {
-    await ctx.reply('No address selected!\nUse /setAddress to set the address');
+    await ctx.reply(lang.messages.addressNotSaved);
   }
 
   ctx.session.address = undefined;
