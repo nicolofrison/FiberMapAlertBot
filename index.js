@@ -31,6 +31,37 @@ cmdPlace.botPlace(bot);
 cmdInfo.botInfo(bot);
 cmdAlert.botAlert(bot);
 
+let helpSetted = false;
+
+bot.command('start', (ctx) => {
+  if (!helpSetted) {
+    const commands = [
+      {
+        command: lang.commands.help.toLowerCase(),
+        description: lang.commandsDescriptions.help
+      },
+      {
+        command: lang.commands.setAddress.toLowerCase(),
+        description: lang.commandsDescriptions.setAddress
+      },
+      {
+        command: lang.commands.info.toLowerCase(),
+        description: lang.commandsDescriptions.info
+      },
+      {
+        command: lang.commands.addAlert.toLowerCase(),
+        description: lang.commandsDescriptions.addAlert
+      },
+      {
+        command: lang.commands.removeAlert.toLowerCase(),
+        description: lang.commandsDescriptions.removeAlert
+      }
+    ];
+    helpSetted = ctx.setMyCommands(commands);
+    console.log(ctx);
+  }
+});
+
 bot.command(lang.commands.help, async (ctx) => {
   let helpMessage = lang.messages.helpMessage.capitalize() + '\n\n' +
     lang.messages.commands.capitalize() + ':\n\n';

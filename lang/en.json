@@ -1,11 +1,20 @@
 {
   "commands": {
     "help": "help",
+    "setAddress": "set_address",
+    "info": "info",
+    "addAlert": "add_alert",
+    "removeAlert": "remove_alert"
+  },
+  "commandsDescriptions": {
+    "help": "help",
     "setAddress": "setAddress",
-    "info": "info"
+    "info": "info",
+    "addAlert": "addAlert",
+    "removeAlert": "removeAlert"
   },
   "messages": {
-    "helpMessage": "telegram bot the ti notifica se qualcosa è cambiato nel sito di fibermap secondo le tue preferenze",
+    "helpMessage": "telegram bot that alert if something in fibermap site changes based on the preferences",
     "commands": "commands",
     "addressSaved": "address saved",
     "addressNotSaved": "'No address saved!\nUse /setAddress to set the address'",
@@ -28,7 +37,12 @@
     "showInfoAbout": "Show info about",
     "infoError": "there was an error for the request /info!",
     "noAlertToAddFound": "no alert able to be added found",
+    "noAlertToRemoveFound": "no alert able to be removed found",
     "addAlertError": "there was an error for the request /addAlert!",
-    "alertAdded": "alert added succesfully!"
+    "alertAdded": "alert added succesfully!",
+    "alertRemoved": "alert removed succesfully!",
+    "somethingChangedForService": "Something changed in the service ",
+    "somethingChangedForType": " for the type ",
+    "somethingChangedInfo": "!\nUser /info to show the actual info"
   }
 }

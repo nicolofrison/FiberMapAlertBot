@@ -51,13 +51,34 @@ const botAlert = (bot) => {
                 if (services.length === 0) {
                     await ctx.reply(lang.messages.noAlertToAddFound.capitalize());
                 } else {
+                    ctx.session.alertAction = "add";
                     ctx.session.services = services;
 
                     const servicesButtons = services.map((s) => [Markup.callbackButton(s.name, 'alertService'+s.name)]);
 
-                    ctx.reply(lang.messages.selectService.capitalize(), Extra.HTML().markup(
+                    await ctx.reply(lang.messages.selectService.capitalize(), Extra.HTML().markup(
                         Markup.inlineKeyboard(servicesButtons)));
                 }
+            }
+        }
+    });
+
+    bot.command(lang.commands.removeAlert, async (ctx) => {
+        const user1 = await user.find((await ctx.getChat()).id);
+
+        if (user1 === undefined) {
+            await ctx.reply(lang.messages.addressNotSaved);
+        } else {
+            ctx.session.alertAction = "remove";
+            ctx.session.services = user1.service;
+
+            if (user1.service.length === 0) {
+                await ctx.reply(lang.messages.noAlertToRemoveFound.capitalize());
+            } else {
+                const servicesButtons = user1.service.map((s) => [Markup.callbackButton(s.name, 'alertService'+s.name)]);
+
+                await ctx.reply(lang.messages.selectService.capitalize(), Extra.HTML().markup(
+                    Markup.inlineKeyboard(servicesButtons)));
             }
         }
     });
@@ -92,11 +113,21 @@ const botAlert = (bot) => {
         if (serviceSelected === undefined) {
             await ctx.reply(lang.messages.addAlertError.capitalize());
         } else {
-            if (await alert.addAlert((await ctx.getChat()).id, serviceSelected, typeSelected) === 0) {
-                await ctx.reply(lang.messages.alertAdded.capitalize());
-            } else {
-                await ctx.reply(lang.messages.addAlertError.capitalize());
+            let ok = 0;
+            switch (ctx.session.alertAction) {
+                case "add":
+                    if (await alert.addAlert((await ctx.getChat()).id, serviceSelected, typeSelected) === 0) {
+                        await ctx.reply(lang.messages.alertAdded.capitalize());
+                        return;
+                    }
+                case "remove":
+                    if (await alert.removeAlert((await ctx.getChat()).id, serviceSelected, typeSelected) === 0) {
+                        await ctx.reply(lang.messages.alertRemoved.capitalize());
+                        return;
+                    }
+                default:
             }
+            await ctx.reply(lang.messages.addAlertError.capitalize());
         }
     });
 };

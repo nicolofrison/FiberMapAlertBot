@@ -77,6 +77,6 @@ module.exports.getInfo = async (houseId) => {
 
     const info = response.data.data;
 
-    console.log(response);
+    //console.log(response);
     return info;
 };

@@ -1,12 +1,20 @@
 {
   "commands": {
     "help": "help",
-    "setAddress": "impostaIndirizzo",
+    "setAddress": "imposta_indirizzo",
     "info": "info",
-    "addAlert": "aggiungiAlert"
+    "addAlert": "aggiungi_alert",
+    "removeAlert": "rimuovi_alert"
+  },
+  "commandsDescriptions": {
+    "help": "mostra la descrizione del bot e dei comandi disponibili",
+    "setAddress": "imposta l'indirizzo dell'utente su cui poi si baserà la visualizzazione delle info, l'aggiunta e la rimozione degli alert",
+    "info": "mostra le info dell'indirizzo dell'utente o di un qualsiasi altro indirizzo",
+    "addAlert": "aggiunge un alert a un servizio dell'indirizzo dell'utente",
+    "removeAlert": "rimuove un alert tra quelli aggiunti in precedenza all'indirizzo dell'utente"
   },
   "messages": {
-    "helpMessage": "telegram bot that alert if something in fibermap site changes based on the preferences",
+    "helpMessage": "telegram bot the ti notifica se qualcosa è cambiato nel sito di fibermap secondo le tue preferenze",
     "commands": "comandi",
     "addressSaved": "indirizzo salvato",
     "addressNotSaved": "Nessun indirizzo salvato!\nUsa /impostaIndirizzo per impostare l'indirizzo",
@@ -29,7 +37,12 @@
     "showInfoAbout": "Mostra info di",
     "infoError": "c'è stato un errore per la richiesta /info!",
     "noAlertToAddFound": "non sono presenti possibili alert da aggiungere",
+    "noAlertToRemoveFound": "non sono presenti alert da rimuovere",
     "addAlertError": "c'è stato un errore per la richiesta /aggiungiAlert!",
-    "alertAdded": "alert aggiunto con successo!"
+    "alertAdded": "alert aggiunto con successo!",
+    "alertRemoved": "alert rimosso con successo!",
+    "somethingChangedForService": "c'è stato un cambiamento nel servizio ",
+    "somethingChangedForType": " per il tipo ",
+    "somethingChangedInfo": "!\nUsa /info per visualizzare le info attuali"
   }
 }
