@@ -2,7 +2,8 @@
   "commands": {
     "help": "help",
     "setAddress": "impostaIndirizzo",
-    "info": "info"
+    "info": "info",
+    "addAlert": "aggiungiAlert"
   },
   "messages": {
     "helpMessage": "telegram bot that alert if something in fibermap site changes based on the preferences",
@@ -20,9 +21,15 @@
     "selectStreetNumber": "seleziona numero civico",
     "streetNumberSelected": "numero civico selezionato",
     "setAddressError": "C'è stato un errore durante l'impostazione del indirizzo!",
-    "chooseService": "seleziona il servizio",
+    "serviceSelected": "servizio selezionato",
+    "typeSelected": "tipo selezionato",
+    "selectService": "seleziona il servizio",
+    "selectType": "seleziona il tipo",
     "anotherAddress": "Altro indirizzo",
     "showInfoAbout": "Mostra info di",
-    "infoError": "c'è stato un errore per la richiesta /info!"
+    "infoError": "c'è stato un errore per la richiesta /info!",
+    "noAlertToAddFound": "non sono presenti possibili alert da aggiungere",
+    "addAlertError": "c'è stato un errore per la richiesta /aggiungiAlert!",
+    "alertAdded": "alert aggiunto con successo!"
   }
 }

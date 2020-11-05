@@ -9,10 +9,12 @@ const session = require('telegraf/session');
 const utils = require('./utils');
 const fiberMap = require('./fiberMapRequest');
 const user = require('./user');
+const alert = require('./alert');
 
 // commands
 const cmdPlace = require('./commands/place');
 const cmdInfo = require('./commands/info');
+const cmdAlert = require('./commands/alert');
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 const lang = JSON.parse(fs.readFileSync('./lang/'+process.env.LANGUAGE_FILE));
@@ -27,6 +29,7 @@ bot.use(async (ctx, next) => {
 
 cmdPlace.botPlace(bot);
 cmdInfo.botInfo(bot);
+cmdAlert.botAlert(bot);
 
 bot.command(lang.commands.help, async (ctx) => {
   let helpMessage = lang.messages.helpMessage.capitalize() + '\n\n' +
@@ -39,23 +42,8 @@ bot.command(lang.commands.help, async (ctx) => {
 });
 
 bot.command(lang.commands.setAddress, async (ctx) => {
+  ctx.session.placeAction = 'setAddress';
   await cmdPlace.startPlaceSetup(ctx);
-});
-
-bot.action('saveAddress', async (ctx) => {
-  ctx.session.action = "saveAddress";
-  const chatId = (await ctx.getChat()).id;
-  const address = ctx.session.address;
-
-  if (address) {
-    await user.save(chatId, address);
-    fs.writeFileSync('files/addresses/' + address, JSON.stringify((await fiberMap.getInfo(address)), null, 2));
-    await ctx.reply(lang.messages.addressSaved);
-  } else {
-    await ctx.reply(lang.messages.addressNotSaved);
-  }
-
-  ctx.session.address = undefined;
 });
 
 bot.launch()

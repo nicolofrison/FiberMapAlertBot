@@ -7,6 +7,7 @@ const fs = require('fs');
 
 const utils = require('../utils');
 const botInfo = require('./info');
+const user = require('../user');
 
 const lang = JSON.parse(fs.readFileSync('./lang/'+process.env.LANGUAGE_FILE));
 
@@ -71,9 +72,9 @@ const botPlace = (bot) => {
 
         ctx.session.address = ctx.match[1];
 
-        switch (ctx.session.action) {
+        switch (ctx.session.placeAction) {
             case 'setAddress':
-                await ctx.replyWithChatAction('saveAddress');
+                await saveAddress(ctx);
                 break;
             case 'showInfo':
                 await botInfo.showInfo(ctx);
@@ -83,7 +84,22 @@ const botPlace = (bot) => {
 
         }
 
-        ctx.session.action = undefined;
+        ctx.session.placeAction = undefined;
     });
+
+    const saveAddress = async (ctx) => {
+        const chatId = (await ctx.getChat()).id;
+        const address = ctx.session.address;
+
+        if (address) {
+            await user.saveAddress(chatId, address);
+            fs.writeFileSync('./files/addresses/' + address, JSON.stringify((await fiberMap.getInfo(address)), null, 2));
+            await ctx.reply(lang.messages.addressSaved);
+        } else {
+            await ctx.reply(lang.messages.addressNotSaved);
+        }
+
+        ctx.session.address = undefined;
+    };
 };
 module.exports.botPlace = botPlace;

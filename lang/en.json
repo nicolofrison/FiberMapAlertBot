@@ -20,9 +20,15 @@
     "selectStreetNumber": "select street number",
     "streetNumberSelected": "street number selected",
     "setAddressError": "There was an error during the setup of the address!",
-    "chooseService": "Choose the service",
+    "serviceSelected": "service selected",
+    "typeSelected": "type selected",
+    "selectService": "Choose the service",
+    "selectType": "choose the type",
     "anotherAddress": "another address",
     "showInfoAbout": "Show info about",
-    "infoError": "there was an error for the request /info!"
+    "infoError": "there was an error for the request /info!",
+    "noAlertToAddFound": "no alert able to be added found",
+    "addAlertError": "there was an error for the request /addAlert!",
+    "alertAdded": "alert added succesfully!"
   }
 }

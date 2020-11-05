@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const usersFilePath = 'files/users';
 
-module.exports.save = async (chatId, address) => {
+module.exports.saveAddress = async (chatId, address) => {
     if (!fs.existsSync(usersFilePath)) {
         createFile();
     }
@@ -13,6 +13,7 @@ module.exports.save = async (chatId, address) => {
     users.forEach((u) => {
         if (!found && u.chatId === chatId) {
             u.address = address;
+            u.service = [];
             found = true;
         }
     });

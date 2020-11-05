@@ -28,7 +28,7 @@ const showInfo = async (ctx) => {
     if (info) {
         ctx.session.info = info;
 
-        await ctx.reply(lang.messages.chooseService.capitalize(), Extra.HTML().markup(
+        await ctx.reply(lang.messages.selectService.capitalize(), Extra.HTML().markup(
             Markup.inlineKeyboard(info.service.map((s) => [Markup.callbackButton(s.name, 'service'+s.name)]))));
     } else {
         await ctx.reply(lang.messages.infoError.capitalize());
@@ -60,7 +60,7 @@ const botInfo = (bot) => {
             case 'AnotherAddress':
                 await ctx.editMessageText(lang.messages.showInfoAbout.capitalize() + ': \n\t' +
                     lang.messages.anotherAddress.capitalize());
-                ctx.session.action = "showInfo";
+                ctx.session.placeAction = "showInfo";
                 botPlace.startPlaceSetup(ctx);
                 break;
             default:
@@ -77,9 +77,9 @@ const botInfo = (bot) => {
         if (service) {
             ctx.session.info = service;
 
-            await ctx.editMessageText('Service: ' + serviceName);
+            await ctx.editMessageText(lang.messages.serviceSelected.capitalize() + ': ' + serviceName);
 
-            ctx.reply('Choose the type: ', Extra.HTML().markup(
+            ctx.reply(lang.messages.selectType.capitalize(), Extra.HTML().markup(
                 Markup.inlineKeyboard(service.types.map((t) => [Markup.callbackButton(t.name, 'type' + t.name)]))));
         }
     });
@@ -90,7 +90,7 @@ const botInfo = (bot) => {
 
         const type = ctx.session.info.types.find((t) => t.name === typeName);
 
-        await ctx.editMessageText('Type: ' + typeName);
+        await ctx.editMessageText(lang.messages.typeSelected.capitalize() + ': ' + typeName);
 
         ctx.reply('Info: \n' + JSON.stringify(type, null, 2));
     });
