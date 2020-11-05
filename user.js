@@ -30,6 +30,27 @@ module.exports.save = async (chatId, address) => {
     fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2));
 };
 
+module.exports.find = async (chatId) => {
+    if (!fs.existsSync(usersFilePath)) {
+        createFile();
+    }
+
+    const users = JSON.parse(fs.readFileSync(usersFilePath));
+
+    let user = null;
+    users.forEach((u) => {
+        if (user === null && u.chatId === chatId) {
+            user = u;
+        }
+    });
+
+    if (user !== null) {
+        return user;
+    } else {
+        return -1;
+    }
+};
+
 const createFile = () => {
     fs.writeFileSync(usersFilePath, JSON.stringify([], null, 2));
 }
